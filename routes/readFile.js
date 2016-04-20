@@ -14,6 +14,10 @@ var LogReader = {
 	    var JSONData={};
 	    var NomeFile={};
 	    var Record={};
+	    var Component={};
+	    var Level={};
+	    var Type={};
+	    var Host={};
 	    var Records=[];
 	    var NomeCampi=[];
 
@@ -39,7 +43,14 @@ var LogReader = {
 						Records.push(Record);
 					}
 				}
-				JSONData[nomeFile]=Records;
+				FileName = nomeFile.split(".");
+				FileLevel = FileName[0].split("_");
+				Component[FileLevel[1]] = Records;
+				Level[level]=Component
+				Type[FileLevel[2]]=Level;
+				Host[FileLevel[0]]=Type;
+
+				JSONData=Host;
 		    }
 		    callback(null, JSONData);
 		});
