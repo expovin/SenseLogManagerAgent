@@ -18,26 +18,31 @@ var LogReader = {
 	    var NomeCampi=[];
 
 	    // File impostato per debug
-	    nomeFile="WIN-PL3FATROBTJ_Service_Engine.txt";
+	    fs.readdir("D:\\Log\\"+layer+"\\"+level+"\\", function(err, items) {
+            for (var i=0; i<items.length; i++) {
 
-        var data = fs.readFileSync("D:\\Log\\"+layer+"\\"+level+"\\"+nomeFile);
+			    nomeFile=items[i];
 
-		rows = data.toString().split("\r\n");			        
+		        var data = fs.readFileSync("D:\\Log\\"+layer+"\\"+level+"\\"+nomeFile);
 
-		for(row in rows){
-		   	if(row == 0){
-		   		NomeCampi=rows[row].split("\t");
+				rows = data.toString().split("\r\n");			        
+
+				for(row in rows){
+				   	if(row == 0){
+				   		NomeCampi=rows[row].split("\t");
+				    }
+					else{
+			    		fields = rows[row].split("\t");
+				    	for(field in fields){
+				    		Record[NomeCampi[field]]=fields[field];
+					    }
+						Records.push(Record);
+					}
+				}
+				JSONData[nomeFile]=Records;
 		    }
-			else{
-	    		fields = rows[row].split("\t");
-		    	for(field in fields){
-		    		Record[NomeCampi[field]]=fields[field];
-			    }
-				Records.push(Record);
-			}
-		}
-
-        callback(null, Records);
+		    callback(null, JSONData);
+		});
 
     },
     gerFileList: function(layer,level,callback){
@@ -45,12 +50,9 @@ var LogReader = {
     	var fileList=[];
         //...
         fs.readdir("D:\\Log\\"+layer+"\\"+level+"\\", function(err, items) {
-        	for (var i=0; i<items.length; i++) 
-        		fileList.push(items[i]);
-        
 
-            callback(null, fileList);
-        }                
+            callback(null, items);
+        }); 
     },
     deleteTodo: function(todoId){
         //...

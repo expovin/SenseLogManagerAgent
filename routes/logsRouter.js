@@ -36,6 +36,13 @@
 			
 			res.json(data);			
 		});
+
+		reader.gerFileList(req.params.layer,req.params.level,function(err,fileList){
+			console.log("Sono nella callback : "+fileList[0]);
+
+			
+			//res.json(data);			
+		});		
 	//	var promise = reader.LogReader(req.params.layer,req.params.level, function(error,result){
 
 		/*
