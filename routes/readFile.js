@@ -1,5 +1,5 @@
 var fs = require('fs');
-
+var JSONData={};
 
 var LogReader = {  
 
@@ -11,7 +11,7 @@ var LogReader = {
     getRecords: function(layer,level,callback){
     	console.log("Parametri "+layer+" "+level);
 
-	    var JSONData={};
+	    
 	    var NomeFile={};
 	    var Record={};
 	    var Component={};
@@ -26,8 +26,17 @@ var LogReader = {
             for (var i=0; i<items.length; i++) {
 
 			    nomeFile=items[i];
+			    var PathFile="D:\\Log\\"+layer+"\\"+level+"\\"+items[i];
+			    console.log(PathFile);
 
-		        var data = fs.readFileSync("D:\\Log\\"+layer+"\\"+level+"\\"+nomeFile);
+		        
+
+		        fs.stat(PathFile,function(error, stats){
+		        	console.log(i+") "+PathFile + " - " +JSON.stringify(stats));
+
+		        });
+
+		        var data = fs.readFileSync(PathFile);
 
 				rows = data.toString().split("\r\n");			        
 
@@ -45,10 +54,12 @@ var LogReader = {
 				}
 				FileName = nomeFile.split(".");
 				FileLevel = FileName[0].split("_");
+				
 				Component[FileLevel[1]] = Records;
 				Level[level]=Component
 				Type[FileLevel[2]]=Level;
 				Host[FileLevel[0]]=Type;
+				
 
 				JSONData=Host;
 		    }

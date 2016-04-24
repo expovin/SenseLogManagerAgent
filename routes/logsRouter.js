@@ -30,30 +30,10 @@
 
 	.get(function(req,res,next){    
 		console.log("Prima della call");
-		reader.getRecords(req.params.layer,req.params.level,function(err,data){
-			console.log("Sono nella callback : "+data);
-
-			
+		reader.getRecords(req.params.layer,req.params.level,function(err,data){			
 			res.json(data);			
 		});
-
-		reader.gerFileList(req.params.layer,req.params.level,function(err,fileList){
-			console.log("Sono nella callback : "+fileList[0]);
-
-			
-			//res.json(data);			
-		});		
-	//	var promise = reader.LogReader(req.params.layer,req.params.level, function(error,result){
-
-		/*
-		readFile.contents(req.params.layer,req.params.level,function (err, resp) {
-        if (err) throw err;
-        console.log("Data received : "+resp);
-        res.json(resp);
-    }); 
-    */
-
-	//	console.log("Data received : "+data);
+	
 		
 	});
 
