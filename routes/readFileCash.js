@@ -1,4 +1,5 @@
 var fs = require('fs');
+var async = require("async");
 var JSONData={};
 
 	    var NomeFile={};
@@ -55,38 +56,59 @@ var LogReader = {
 				}catch(e){
 					console.log("File "+LevelName+" non ancora letto! "+e);
 					readFile(PathFile,stats,level,callbackRead);
-				}
-
-
-		        
-		        
+				}  
 		    }
 		    console.log("Pulizia!");
 		    Host={};
 		    Type={};
 		    Level={};
 		    Component={};
-		    callback(null, JSONData);
+		    callback(null, JSONData[HostName]);
 		});
 
     },
-    gerFileList: function(layer,level,callback){
+    gerComponents: function(callback){
 
     	var fileList=[];
-        //...
-        fs.readdir("D:\\Log\\"+layer+"\\"+level+"\\", function(err, items) {
-
+        fs.readdir("D:\\Log\\", function(err, items) {
             callback(null, items);
         }); 
     },
-    deleteTodo: function(todoId){
-        //...
+
+    getLayer: function(layer,callback){
+
+    	var MyData={};
+
+    	var items = fs.readdirSync("D:\\Log\\"+layer+"\\"); 
+    	count=0;
+    	numDir=0;
+    	async.forEach(items, function(item, Mycallback) {
+			var PathFile="D:\\Log\\"+layer+"\\"+item;
+			var stats = fs.statSync(PathFile);
+			
+			console.log("count : "+count+" di "+items.length);
+			if(stats.isDirectory()) {
+				numDir++;
+				console.log("Folder da elaborare : "+item+" "+JSON.stringify(stats));
+		        LogReader.getRecords(layer,item,function(err,data){
+		        	count++;
+		            MyData=data;
+		            console.log("count : "+count+" di "+numDir);
+		            if(count == numDir)
+		            	callback(null,MyData[layer]);
+		        });
+		    }
+
+
+    	},function(err) {
+    		console.log("Finito!");
+    		callback(null,MyData);
+    	});
+    	
     }
 };
 
 module.exports = LogReader;  
-
-
 
 
 
