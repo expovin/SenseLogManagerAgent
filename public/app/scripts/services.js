@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('confusionApp')
+angular.module('QLog')
         .constant("baseURL","http://localhost:3000/")
 //        .factory('menuFactory', ['$http', 'baseURL', function($http,baseURL) {
         .service('menuFactory', ['$resource', 'baseURL', function($resource,baseURL) {          
@@ -35,17 +35,20 @@ angular.module('confusionApp')
                 return corpfac;
         }])
 
-        .factory('feedbackFactory',['$resource', 'baseURL', function($resource,baseURL) {          
-    
-            var feedfac = {};
 
-                feedfac.getFeedbacks = function(){
-                    //return $resource(baseURL+"feedback/:id",null,  {'update':{method:'PUT'}});
-                    return $resource(baseURL+"feedback/:id",null,  {'insert':{method:'PUSH'},
-                                                                    'update':{method:'PUT'} });
+        .factory('addServerFactory',['$resource', 'baseURL', function($resource,baseURL) {          
+    
+            var headfac = {};
+
+                headfac.getLayers = function(){
+                    JSON = $resource(baseURL+"logs",null,  {'update':{method:'PUT' }});
+                    return JSON;
+                                                                    
                 };           
-                return feedfac;
+                return headfac;
         }])
+
+        
 
         .factory('logsViewFactory',['$resource', 'baseURL', function($resource,baseURL) {          
     

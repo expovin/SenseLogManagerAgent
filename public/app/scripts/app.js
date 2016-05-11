@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('confusionApp', ['ui.router','ngResource'])
+angular.module('QLog', ['ui.router','ngResource'])
 .config(function($stateProvider, $urlRouterProvider) {
         $stateProvider
         
@@ -10,10 +10,11 @@ angular.module('confusionApp', ['ui.router','ngResource'])
                 views: {
                     'header': {
                         templateUrl : 'views/header.html',
+                        controller  : 'AboutController'
                     },
                     'content@': {
-                        templateUrl : 'views/LogsView.html',
-                        controller  : 'LogsViewController'
+                        templateUrl : 'views/ServersView.html',
+                        controller  : 'AboutController'
                     },
                     'footer': {
                         templateUrl : 'views/footer.html',
