@@ -94,3 +94,8 @@ body {
   position: absolute;
   right: 0px;
 }
+
+.panel-title i {
+    float: right;
+     margin: 0 0 5px 5px;
+}

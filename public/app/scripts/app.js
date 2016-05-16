@@ -10,11 +10,11 @@ angular.module('QLog', ['ui.router','ngResource'])
                 views: {
                     'header': {
                         templateUrl : 'views/header.html',
-                        controller  : 'AboutController'
+                        controller  : 'HeaderController'
                     },
                     'content@': {
-                        templateUrl : 'views/ServersView.html',
-                        controller  : 'AboutController'
+                        templateUrl : 'views/Home.html',
+                        controller  : 'ServerController'
                     },
                     'footer': {
                         templateUrl : 'views/footer.html',
@@ -29,7 +29,7 @@ angular.module('QLog', ['ui.router','ngResource'])
                 views: {
                     'content@': {
                         templateUrl : 'views/aboutus.html',
-                        controller  : 'AboutController'                  
+                        controller  : 'HeaderController'
                     }
                 }
             })

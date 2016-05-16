@@ -2,24 +2,42 @@
 
 angular.module('QLog')
 
-        .controller('AboutController', ['$scope','logsViewFactory', function($scope,logsViewFactory) {
-            
-            $scope.layers = {};
-            $scope.server = {ServerName :""};
-            
-            $scope.addServer = function() {
-                console.log("addServer called! "+$scope.server.ServerName);
+        .controller('HeaderController', ['$scope','$localStorage', function($scope,$localStorage) {
 
-                $scope.layers =  logsViewFactory.getLog().query(
-                function(response) {
-                    console.log("Tutto ok!");
-                    console.log($scope.layers);
-                },
-                function(response) {
-                    console.log("Qui ERRORE!");
-                });
-                
+            $scope.addServer = function() {
+                $localStorage.storeObject('ServerList', $scope.server.ServerName,$scope.ServersList);
             }
         }])        
+
+
+        .controller('ServerController', ['$scope','logsViewFactory','storeServerList','$localStorage', function($scope,logsViewFactory,storeServerList,$localStorage) {
+            
+            $scope.layers = {};
+
+            $scope.ServersList = $localStorage.getObject('ServerList');
+
+            if($scope.ServersList.length !== 0)
+            {
+                for(var i=0; i< $scope.ServersList.length; i++ ){
+
+                    $scope.layers =  logsViewFactory.getLog($scope.ServersList[i].name).query(
+                    function(response) {
+                        console.log($scope.layers);
+                        $scope.ServersList[i-1].layers = $scope.layers;
+                        $localStorage.updateServerLayers('ServerList',$scope.ServersList[i-1].name,$scope.ServersList[i-1].layers);
+                        console.log(i+" - "+JSON.stringify($scope.ServersList[i-1]));
+                    },
+                    function(response) {
+                        console.log("Qui ERRORE!");
+                    });
+
+                }            
+            }
+
+            $scope.removeServer = function (ServerName) {
+                console.log("removeServer Triggered! "+ServerName);
+            }
+
+        }])  
 
 ;
