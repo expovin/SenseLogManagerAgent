@@ -63,58 +63,97 @@ angular.module('QLog')
                 return logsfac;
         }])
 
+        .factory('$sessionStorage',['$window', function($window) {
+
+            var Mylogs = $window.sessionStorage['logs'];
+            var stat = {};
+
+
+            return {
+                store: function (Server, Layer, Slog) {
+                    var MyLog = $window.sessionStorage['logs_'+Server];
+
+                    if(MyLog === undefined)
+                        var MyLog = {};
+                    else
+                        MyLog = JSON.parse(MyLog);
+
+                    MyLog[Layer] = Slog;
+
+                    var listServer = JSON.parse($window.localStorage["ServerList"]);
+                    listServer[Server].layers[Layer].numRecords=Object.keys(Slog).length;
+                    $window.localStorage["ServerList"] = JSON.stringify(listServer);
+
+
+                    $window.sessionStorage['logs_'+Server] = JSON.stringify(MyLog);
+                },
+                get: function (Server) {
+                    return JSON.parse($window.sessionStorage['logs_'+Server]);
+                }       
+            }
+
+        }])
+
 
 .factory('$localStorage', ['$window', function ($window) {
 
-    var listServer = [];
+    var listServer = {};
     var ServerNode = {name:'', lastUpdateDate:''};
 
     return {
         store: function (key, value) {
             ServerNode.name = value;
             listServer.push(ServerNode);
-            console.log(listServer);
             $window.localStorage[key] = listServer;
         },
+
+
         get: function (key, defaultValue) {
             return $window.localStorage[key] || defaultValue;
         },
+
+
         remove: function (key) {
-            $window.localStorage.removeItem(key);
+            delete listServer[key];
+            $window.localStorage["ServerList"] = JSON.stringify(listServer);
         },
+
+
         storeObject: function (key, value, array) {
-            var listServer = array;
-            var ServerNode = {name:'', layers:'', lastUpdateDate:''};
+            var listServer = $window.localStorage["ServerList"];
 
-            for(var i=0; i<listServer.length; i++){
-                if(listServer[i].name===value)
-                    return;
-            }
-            var datetime = new Date();
-            console.log("Gong to add Key:"+key+" Value:"+value+" Last update "+datetime);
-            
-            ServerNode.name = value;
-            ServerNode.lastUpdateDate = datetime;
-            listServer.push(ServerNode);
+            if(listServer === undefined)
+                listServer={};
+            else
+                listServer = JSON.parse(listServer);
 
-            $window.localStorage[key] = JSON.stringify(listServer);
+
+            if(listServer[value] === undefined){
+                var datetime = new Date();
+
+                listServer[value] = {name:'', layers:{}, lastUpdateDate:''};
+                listServer[value].name = value;
+                listServer[value].lastUpdateDate = datetime;
+                $window.localStorage[key] = JSON.stringify(listServer);
+            }   
         },
         updateServerLayers : function (key,serverName,Layers){
             var datetime = new Date();
+            
+            console.log("serverName "+serverName+" Layers "+Layers);
             listServer = JSON.parse($window.localStorage[key]);
 
-            for(var i=0; i<listServer.length; i++){
-                if(listServer[i].name===serverName){
-                    listServer[i].layers = Layers;
-                    listServer[i].lastUpdateDate = datetime;
-                }
-
-            }     
-            $window.localStorage[key] = JSON.stringify(listServer);       
-
+            Layers.forEach(function(result,index){
+                var LayerDetails = {numRecords: '', warnings:'', errors:'', lastUpdateDate:''};
+                listServer[serverName].layers[result]=LayerDetails;   
+            });
+                    
+            listServer[serverName].lastUpdateDate = datetime;
+   
+            $window.localStorage[key] = JSON.stringify(listServer);
         },
         getObject: function (key, defaultValue) {
-            return JSON.parse($window.localStorage[key] || '[]');
+            return JSON.parse($window.localStorage[key] || '{}');
         }
     }
 }])

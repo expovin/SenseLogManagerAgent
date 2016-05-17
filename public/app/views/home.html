@@ -19,15 +19,15 @@
                                 <div class="panel-title"><bold>{{Server.name}}</bold> 
                                   <i>
                                     <span class="glyphicon glyphicon-remove" aria-hidden="true" ng-click="removeServer(Server.name)"></span>
-                                    <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>
+                                    <span class="glyphicon glyphicon-download-alt" aria-hidden="true" ng-click="getLayersLog(Server.name)"></span>
                                   </i>
                                 </div>
                               </div>
                               <div class="panel-body">
                                 <dl class="dl-horizontal" >
-                                  <div ng-repeat="Layer in Server.layers">
-                                    <dt>{{Layer}}</dt>
-                                    <dd>N/A</dd>
+                                  <div ng-repeat="(LayerName, LayerDett) in Server.layers">
+                                    <dt>{{LayerName}} <span class="glyphicon glyphicon-download-alt" aria-hidden="true" ng-click="getLayerLog(Server.name,LayerName)"></span></dt>
+                                    <dd>{{LayerDett.numRecords}}</dd>
                                   </div>
                                </dl>
                               </div>

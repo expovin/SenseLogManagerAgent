@@ -70,8 +70,19 @@ var LogReader = {
     gerComponents: function(callback){
 
     	var fileList=[];
+    	var index;
         fs.readdir("D:\\Log\\", function(err, items) {
-            callback(null, items);
+        	index= items.indexOf("AppMigration");
+        	items.splice(index,1);
+
+        	index= items.indexOf("DataProfiling");
+        	items.splice(index,1);
+
+        	index= items.indexOf("Script");
+        	items.splice(index,1);
+
+        	callback(null, items);
+            
         }); 
     },
 
