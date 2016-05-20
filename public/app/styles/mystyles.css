@@ -1,3 +1,8 @@
+a {
+    color: RGB(86,173,53);
+    text-decoration: none;
+}
+
 .row-header {
   margin: 0px auto;
   padding: 0px 0px;
@@ -34,6 +39,16 @@
 .navbar-inverse {
   background: #404040;
   color: #ffffff;
+}
+
+.nav > li > a:focus, .nav > li > a:hover {
+  color: RGB(86,173,53);
+  text-decoration: none;
+
+}
+
+.nav-pills > li.active > a, .nav-pills > li.active > a:focus, .nav-pills > li.active > a:hover {
+  background-color: RGB(86,173,53);
 }
 .navbar-inverse .navbar-nav > .active > a {
   background: #1a237e;
@@ -98,4 +113,8 @@ body {
 .panel-title i {
     float: right;
      margin: 0 0 5px 5px;
+}
+
+.nav-tabs {
+    margin-bottom: 0;
 }

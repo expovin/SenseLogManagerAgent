@@ -1,8 +1,7 @@
 'use strict';
 
 angular.module('QLog')
-
-        .controller('HeaderController', ['$scope','$window','$localStorage', function($scope,$window,$localStorage,$sessionStorage) {
+        .controller('HeaderController', ['$scope','$window','$localStorage', function($scope,$window,$localStorage) {
 
             $scope.addServer = function() {
                 $localStorage.storeObject('ServerList', $scope.server.ServerName,$scope.ServersList);
@@ -47,28 +46,11 @@ angular.module('QLog')
             }
 
             $scope.getLayersLog = function (ServerName) {
+                // Da qui richiamo in ciclo ricorsivo la getLayerLog
 
-                $scope.ServersList.forEach(function(result,index){
-                    if(result.name === ServerName) {
-                        result.layers.forEach(function(layer,idx){
-                            console.log("Getting "+layer);
-                            $scope.logs = logsViewFactory.getLog(ServerName).get({layer:layer})
-                            .$promise.then(
-                                            function(response){
-                                                console.log("Log acquired!");
-                                                $sessionStorage.store(ServerName,layer,$scope.logs);
-                                                
-                                            },
-                                            function(response) {
-                                                console.log("Errore!");
-                                            }
-                            );
-
-                        }); 
-                    }
-
-                });
-
+                var layer = $localStorage.getObject("ServerList",{});
+                console.log(layer[ServerName].layers);
+                 this.getLayerLog(ServerName,'Engine');
             }      
 
             $scope.getLayerLog = function (ServerName,layer) {
@@ -78,15 +60,52 @@ angular.module('QLog')
                 .$promise.then(
                     function(response){
                         $sessionStorage.store(ServerName,layer,response);
+                        $localStorage.updateLayersStats(ServerName,layer,response);
                     },
                     function(response) {
                         console.log("Errore!");
                     }
                 );
-
-                //Reload Controllers
-                //$route.reload();
             } 
         }])  
+
+        .controller('LogsViewController', ['$scope','$window','$localStorage','$sessionStorage', function($scope,$window,$localStorage,$sessionStorage) {
+
+            $scope.logs = $sessionStorage.get('localhost');
+
+            $scope.activeLayer = Object.keys($scope.logs)[0];
+            $scope.activeDir = Object.keys($scope.logs[$scope.activeLayer])[0];
+            $scope.activeFile = Object.keys($scope.logs[$scope.activeLayer][$scope.activeDir])[0];
+
+            console.log("activeLayer "+$scope.activeLayer);
+            console.log("activeDir "+$scope.activeDir);
+            console.log("activeFile "+$scope.activeFile);
+
+            $scope.selectLayer = function (layerName) {
+                console.log("Selezionato Layer "+layerName);
+                $scope.activeLayer = layerName;
+                $scope.activeDir = Object.keys($scope.logs[$scope.activeLayer])[0];
+                $scope.activeFile = Object.keys($scope.logs[$scope.activeLayer][$scope.activeDir])[0];                
+            }
+
+            $scope.selectDir = function (dirName) {
+                console.log("Selezionata dir "+dirName);
+                $scope.activeDir = dirName;
+                $scope.activeFile = Object.keys($scope.logs[$scope.activeLayer][$scope.activeDir])[0];
+            }      
+
+            $scope.selectFile = function (fileName) {
+                console.log("Selezionata file "+fileName);
+                $scope.activeFile = fileName;
+            }      
+
+            $scope.showColl = function(Layer,Dir,File,callName){
+                    var listServer = JSON.parse($window.localStorage["ServerList"]);
+                    return (listServer["localhost"]["layers"][Layer][Dir][File][callName]=='True');
+                   
+
+                } 
+
+        }])           
 
 ;

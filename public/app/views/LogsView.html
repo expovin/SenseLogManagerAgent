@@ -1,44 +1,47 @@
 
         <div class="row row-content">
             <div class="col-xs-12">        
-          
                 <h1>Dettaglio Log</h1>
 
-                                    
-
-                    <div ng-repeat="(ServerName, ServerLog) in logs">
-
-                         <div ng-repeat="(LayerName, LayerValue) in ServerLog">
-
-                             <div ng-repeat="(LevelName, LevelValue) in LayerValue">
-
-                                 <div ng-repeat="(FileName, FileLogs) in LevelValue">
-
-             
-
-                                        
-                                         
-
-<table class="table table-condensed table-hover table-responsive">
-    <thead>
-        <tr>
-            <th ng-repeat="field in logHeader">{{field}}</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr ng-repeat="(RecordsKey, RecordsValue) in FileLogs">
-            <td ng-repeat="(FieldKey, FieldValue) in RecordsValue">{{ FieldValue }}</td>
-        </tr>
-    </tbody>
-</table>
-
-
-                                              
-                                 </div>  
-                             </div>  
-                         </div>       
+                <div class="row">
+                    <div class="col-md-1">
+                        <ul class="nav nav nav-pills nav-stacked" >
+                          <li role="presentation" ng-class="{active: LayerName == activeLayer}" ng-click="selectLayer(LayerName)" ng-repeat="(LayerName, LayerValue) in logs"><a href="#LogsView">{{LayerName}}</a></li>
+                        </ul>  
                     </div>
+                    
+                        <div class="col-md-11">
+                            <ul class="nav nav-tabs">
+                              <li role="presentation" ng-class="{active: DirName == activeDir}" ng-click="selectDir(DirName)" 
+                              ng-repeat="(DirName, DirValue) in logs[activeLayer]"><a href="#LogsView">{{DirName}}</a>
+                              </li>
+                            </ul>
 
+                            <div class="tab-content">
+                                <br>
+
+                                <ul class="nav nav-pills">
+                                  <li role="presentation" ng-class="{active: FileName == activeFile}" ng-click="selectFile(FileName)" 
+                                  ng-repeat="(FileName, FileValue) in logs[activeLayer][activeDir]"><a href="#LogsView">{{FileName}}</a></li>
+                                </ul>
+
+                                 <table class="table table-hover">
+                                     <thead>
+                                      <tr>
+                                        <th ng-repeat="HeaderName in logs[activeLayer][activeDir][activeFile].Header" ng-if="showColl(activeLayer,activeDir,activeFile,HeaderName)">{{HeaderName}}</th>
+                                      </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                      <tr ng-repeat="(RecName, RecVal) in logs[activeLayer][activeDir][activeFile].Records">    
+                                          <td ng-repeat="(Key,val) in RecVal" ng-if="showColl(activeLayer,activeDir,activeFile,Key)">{{val}}</td>
+                                      </tr>
+                                 </table>
+
+                            </div>
+                        </div>
+
+                </div>
 
             </div>
             </div>

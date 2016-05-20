@@ -51,7 +51,7 @@ angular.module('QLog')
 
         
 
-        .factory('logsViewFactory',['$resource', 'baseURL', function($resource,baseURL) {          
+        .factory('logsViewFactory',['$resource', 'baseURL','$localStorage', function($resource,baseURL,$localStorage) {          
     
             var logsfac = {};
             var JSON = {};
@@ -59,7 +59,8 @@ angular.module('QLog')
                 logsfac.getLog = function(serverName){
                     JSON = $resource("http://"+serverName+":"+baseURL+"/logs/:layer/:level");
                     return JSON;
-                };           
+                };  
+
                 return logsfac;
         }])
 
@@ -79,11 +80,6 @@ angular.module('QLog')
                         MyLog = JSON.parse(MyLog);
 
                     MyLog[Layer] = Slog;
-
-                    var listServer = JSON.parse($window.localStorage["ServerList"]);
-                    listServer[Server].layers[Layer].numRecords=Object.keys(Slog).length;
-                    $window.localStorage["ServerList"] = JSON.stringify(listServer);
-
 
                     $window.sessionStorage['logs_'+Server] = JSON.stringify(MyLog);
                 },
@@ -151,6 +147,42 @@ angular.module('QLog')
             listServer[serverName].lastUpdateDate = datetime;
    
             $window.localStorage[key] = JSON.stringify(listServer);
+        },
+        updateLayersStats : function(serverName,Layer,Slog) {
+         // Accedo al local Storage per fare un update delle informazioni di sintesi sui log raccolti
+         // e le scrivo nel JSON per ogni Layer
+            var listServer = JSON.parse($window.localStorage["ServerList"]);
+            var File={};
+            var Dir={};
+            var Field={};
+            var cont=0;
+
+            listServer[serverName].layers[Layer].numRecords=Object.keys(Slog).length;
+            angular.forEach(Slog, function(valueDir, keyDir){
+                Dir={};
+                File={};
+                angular.forEach(valueDir, function(valueFile, keyFile){
+                    //console.log("value : "+keyFile+" "+JSON.stringify(valueFile.Header));
+                    cont = 0;
+                    angular.forEach(valueFile.Header , function(result, index){
+                        if(cont < 6)
+                            Field[result]='True';
+                        else
+                            Field[result]='False';
+                        cont++;
+                        File[keyFile]=Field;
+                    });
+                    
+                    Dir[keyDir]=File;
+                    listServer[serverName].layers[Layer][keyDir]=Dir[keyDir];
+                    console.log(File);
+                    console.log(Dir);
+
+                });
+            });
+
+
+            $window.localStorage["ServerList"] = JSON.stringify(listServer);
         },
         getObject: function (key, defaultValue) {
             return JSON.parse($window.localStorage[key] || '{}');
