@@ -69,7 +69,7 @@ angular.module('QLog')
             } 
         }])  
 
-        .controller('LogsViewController', ['$scope','$window','$localStorage','$sessionStorage', function($scope,$window,$localStorage,$sessionStorage) {
+        .controller('LogsViewController', ['$scope','$window','$localStorage','$sessionStorage','$modal', function($scope,$window,$localStorage,$sessionStorage,$modal) {
 
             $scope.logs = $sessionStorage.get('localhost');
 
@@ -100,12 +100,35 @@ angular.module('QLog')
             }      
 
             $scope.showColl = function(Layer,Dir,File,callName){
-                    var listServer = JSON.parse($window.localStorage["ServerList"]);
-                    return (listServer["localhost"]["layers"][Layer][Dir][File][callName]=='True');
-                   
+                    $scope.listServer = JSON.parse($window.localStorage["ServerList"]);
+                    return ($scope.listServer["localhost"]["layers"][Layer][Dir][File][callName]=='YES');
+            }
 
-                } 
+
+              $scope.open = function() {
+                $modal.open({
+                  templateUrl: 'views/ModalShowTabFields.html',
+                  controller: 'ModalShowFieldsController',
+                  scope : $scope
+                });
+              };
 
         }])           
+
+        .controller ('ModalShowFieldsController',['$scope','$modal','$modalInstance','$localStorage', function($scope,$modal,$modalInstance,$localStorage) {
+
+            $scope.ok = function (result) {
+                console.log(result);
+                $localStorage.updateFileLayer('ServerList',$scope.listServer)
+                 $modalInstance.close();
+            }
+
+            $scope.cancel = function () {
+                console.log("Cancel");
+                $modalInstance.dismiss('cancel');
+            }
+
+
+        }])
 
 ;

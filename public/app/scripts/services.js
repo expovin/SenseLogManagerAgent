@@ -3,38 +3,7 @@
 angular.module('QLog')
         .constant("port","3000")
         .constant("baseURL","3000")
-//        .factory('menuFactory', ['$http', 'baseURL', function($http,baseURL) {
-        .service('menuFactory', ['$resource', 'baseURL', function($resource,baseURL) {          
-          var menufac = {};
 
-                this.getDishes = function(){
-                    return $resource(baseURL+"dishes/:id",null,  {'update':{method:'PUT' }});
-                };
-
-    
-                // implement a function named getPromotion
-                // that returns a selected promotion.
-
-                this.getPromotion = function(index){ 
-                    return $resource(baseURL+"promotions/:id",null,  {'update':{method:'PUT' }});
-                };                      
-
-          //      return menufac;                    
-        }])
-
-        .factory('corporateFactory',['$resource', 'baseURL', function($resource,baseURL) {          
-    
-            var corpfac = {};
-     
-            // Implement two functions, one named getLeaders,
-            // the other named getLeader(index)
-            // Remember this is a factory not a service
-
-                corpfac.getLeaders = function(){
-                    return $resource(baseURL+"leadership/:id",null,  {'update':{method:'PUT' }});
-                };           
-                return corpfac;
-        }])
 
 
         .factory('addServerFactory',['$resource', 'baseURL', function($resource,baseURL) {          
@@ -133,6 +102,11 @@ angular.module('QLog')
                 $window.localStorage[key] = JSON.stringify(listServer);
             }   
         },
+        updateFileLayer : function (key,listServer) {
+              console.log(listServer);
+              $window.localStorage[key] = JSON.stringify(listServer);
+        },
+
         updateServerLayers : function (key,serverName,Layers){
             var datetime = new Date();
             
@@ -166,18 +140,16 @@ angular.module('QLog')
                     cont = 0;
                     angular.forEach(valueFile.Header , function(result, index){
                         if(cont < 6)
-                            Field[result]='True';
+                            Field[result]='YES';
                         else
-                            Field[result]='False';
+                            Field[result]='NO';
                         cont++;
                         File[keyFile]=Field;
                     });
                     
                     Dir[keyDir]=File;
+                    Field={};
                     listServer[serverName].layers[Layer][keyDir]=Dir[keyDir];
-                    console.log(File);
-                    console.log(Dir);
-
                 });
             });
 

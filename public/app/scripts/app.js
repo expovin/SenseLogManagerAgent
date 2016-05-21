@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('QLog', ['ui.router','ngResource'])
+angular.module('QLog', ['ui.router','ngResource','ui.bootstrap'])
 .config(function($stateProvider, $urlRouterProvider) {
         $stateProvider
         
@@ -19,31 +19,10 @@ angular.module('QLog', ['ui.router','ngResource'])
                     'footer': {
                         templateUrl : 'views/footer.html',
                     }
-                }
-
+                }                
             })
         
-            // route for the aboutus page
-            .state('app.aboutus', {
-                url:'aboutus',
-                views: {
-                    'content@': {
-                        templateUrl : 'views/aboutus.html',
-                        controller  : 'HeaderController'
-                    }
-                }
-            })
         
-            // route for the contactus page
-            .state('app.contactus', {
-                url:'contactus',
-                views: {
-                    'content@': {
-                        templateUrl : 'views/contactus.html',
-                        controller  : 'ContactController'                  
-                    }
-                }
-            })
 
             // route for the menu page
             .state('app.LogsView', {
@@ -56,16 +35,6 @@ angular.module('QLog', ['ui.router','ngResource'])
                 }
             })
 
-            // route for the dishdetail page
-            .state('app.dishdetails', {
-                url: 'menu/:id',
-                views: {
-                    'content@': {
-                        templateUrl : 'views/dishdetail.html',
-                        controller  : 'DishDetailController'
-                   }
-                }
-            });
     
         $urlRouterProvider.otherwise('/');
     })

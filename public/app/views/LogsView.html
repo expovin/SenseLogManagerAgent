@@ -20,10 +20,24 @@
                             <div class="tab-content">
                                 <br>
 
-                                <ul class="nav nav-pills">
-                                  <li role="presentation" ng-class="{active: FileName == activeFile}" ng-click="selectFile(FileName)" 
-                                  ng-repeat="(FileName, FileValue) in logs[activeLayer][activeDir]"><a href="#LogsView">{{FileName}}</a></li>
-                                </ul>
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <ul class="nav nav-pills">
+                                          <li role="presentation" ng-class="{active: FileName == activeFile}" ng-click="selectFile(FileName)" 
+                                          ng-repeat="(FileName, FileValue) in logs[activeLayer][activeDir]"><a href="#LogsView">{{FileName}}</a></li>
+                                        </ul>
+                                    </div>
+                                    <div class="col-md-3">
+                                        Data aggiornamento : {{logs[activeLayer][activeDir][activeFile].Stats.mtime}}
+                                    </div>
+                                    <div class="col-md-5">
+                                        
+                                    </div>                                    
+                                    <div class="col-md-1">
+                                        <span class="glyphicon glyphicon-th-list" aria-hidden="true" ng-click="open()" ></span>
+                                    </div>
+
+                                </div>
 
                                  <table class="table table-hover">
                                      <thead>

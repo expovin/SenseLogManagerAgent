@@ -1,0 +1,32 @@
+<div modal="showModal" close="cancel()">
+  <div class="modal-header">
+      <a class="close" data-dismiss="modal">×</a>
+      <h4>Modal Dialog</h4>
+  </div>
+  <div class="modal-body">
+
+  <div class="row">
+      <div class="col-md-6">
+        <ul>
+          <li ng-repeat="(Key,val) in listServer['localhost']['layers'][activeLayer][activeDir][activeFile]">
+            <input type="checkbox" ng-model="listServer['localhost']['layers'][activeLayer][activeDir][activeFile][Key]" ng-true-value="'YES'" ng-false-value="'NO'">
+            <label>{{listServer['localhost']['layers'][activeLayer][activeDir][activeFile][Key]}} - {{Key}}</label>
+          </li>
+        </ul>        
+      </div>      
+
+      <div class="col-md-6">
+        <ul>
+          <li ng-repeat="(Key,val) in listServer['localhost']['layers'][activeLayer][activeDir][activeFile]">
+            <label>{{Key}} : {{val}}</label>
+          </li>
+        </ul>        
+      </div> 
+
+  </div>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-success" ng-click="ok(listServer)">Okay</button>
+    <button class="btn" ng-click="cancel()">Cancel</button>
+  </div>
+</div>
