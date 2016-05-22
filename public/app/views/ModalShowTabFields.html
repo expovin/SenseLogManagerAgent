@@ -8,20 +8,21 @@
   <div class="row">
       <div class="col-md-6">
         <ul>
-          <li ng-repeat="(Key,val) in listServer['localhost']['layers'][activeLayer][activeDir][activeFile]">
-            <input type="checkbox" ng-model="listServer['localhost']['layers'][activeLayer][activeDir][activeFile][Key]" ng-true-value="'YES'" ng-false-value="'NO'">
-            <label>{{listServer['localhost']['layers'][activeLayer][activeDir][activeFile][Key]}} - {{Key}}</label>
+          <li ng-repeat="(Key,val) in listServer['localhost']['layers'][activeLayer][activeDir][activeFile]" ng-hide="$odd">
+            <input type="checkbox" ng-model="listServer['localhost']['layers'][activeLayer][activeDir][activeFile][Key].show" ng-true-value="'YES'" ng-false-value="'NO'">
+            <label>{{listServer['localhost']['layers'][activeLayer][activeDir][activeFile][val].name}} - {{Key}}</label>
           </li>
         </ul>        
-      </div>      
+      </div>       
 
       <div class="col-md-6">
         <ul>
-          <li ng-repeat="(Key,val) in listServer['localhost']['layers'][activeLayer][activeDir][activeFile]">
-            <label>{{Key}} : {{val}}</label>
+          <li ng-repeat="(Key,val) in listServer['localhost']['layers'][activeLayer][activeDir][activeFile]" ng-hide="$even">
+            <input type="checkbox" ng-model="listServer['localhost']['layers'][activeLayer][activeDir][activeFile][Key].show" ng-true-value="'YES'" ng-false-value="'NO'">
+            <label>{{listServer['localhost']['layers'][activeLayer][activeDir][activeFile][val].name}} - {{Key}}</label>
           </li>
         </ul>        
-      </div> 
+      </div>  
 
   </div>
   </div>

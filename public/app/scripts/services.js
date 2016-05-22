@@ -110,13 +110,18 @@ angular.module('QLog')
         updateServerLayers : function (key,serverName,Layers){
             var datetime = new Date();
             
-            console.log("serverName "+serverName+" Layers "+Layers);
             listServer = JSON.parse($window.localStorage[key]);
 
-            Layers.forEach(function(result,index){
-                var LayerDetails = {numRecords: '', warnings:'', errors:'', lastUpdateDate:''};
-                listServer[serverName].layers[result]=LayerDetails;   
-            });
+            if(listServer[serverName].layers != undefined){
+                    if(listServer[serverName].layers[Layers] != undefined){
+                    Layers.forEach(function(result,index){
+                        var LayerDetails = {numRecords: '', warnings:'', errors:'', lastUpdateDate:''};
+                        listServer[serverName].layers[result]=LayerDetails;   
+                    });
+                }
+            }
+            else
+                console.log("Layer defined!");
                     
             listServer[serverName].lastUpdateDate = datetime;
    
@@ -128,29 +133,43 @@ angular.module('QLog')
             var listServer = JSON.parse($window.localStorage["ServerList"]);
             var File={};
             var Dir={};
+            var FieldList={};
             var Field={};
             var cont=0;
 
-            listServer[serverName].layers[Layer].numRecords=Object.keys(Slog).length;
             angular.forEach(Slog, function(valueDir, keyDir){
                 Dir={};
                 File={};
-                angular.forEach(valueDir, function(valueFile, keyFile){
-                    //console.log("value : "+keyFile+" "+JSON.stringify(valueFile.Header));
-                    cont = 0;
-                    angular.forEach(valueFile.Header , function(result, index){
-                        if(cont < 6)
-                            Field[result]='YES';
-                        else
-                            Field[result]='NO';
-                        cont++;
-                        File[keyFile]=Field;
+
+                if (listServer[serverName].layers[Layer][keyDir] == undefined){
+                    console.log(listServer[serverName].layers[Layer][keyDir]);
+                    angular.forEach(valueDir, function(valueFile, keyFile){
+                        cont = 0;
+                        angular.forEach(valueFile.Header , function(result, index){
+                            if(cont < 6){
+                                Field['name']=result;
+                                Field['show']='YES';
+                            }
+                            else{
+                                Field['name']=result;
+                                Field['show']='NO';
+                            }
+                            FieldList[result]=Field
+                            Field={};
+                            cont++;
+                        });
+                        cont=0;
+                        File[keyFile]=FieldList;
+                        FieldList={};
+                        
+                        Dir[keyDir]=File;
+                        Field={};
+                        listServer[serverName].layers[Layer][keyDir]=File;
                     });
-                    
-                    Dir[keyDir]=File;
-                    Field={};
-                    listServer[serverName].layers[Layer][keyDir]=Dir[keyDir];
-                });
+                }
+                else
+                    console.log(" gia definito! Skippato");
+
             });
 
 

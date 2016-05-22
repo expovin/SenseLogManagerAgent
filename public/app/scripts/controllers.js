@@ -54,8 +54,6 @@ angular.module('QLog')
             }      
 
             $scope.getLayerLog = function (ServerName,layer) {
-
-                console.log("Getting "+layer);
                 $scope.logs = logsViewFactory.getLog($scope.ServersList[ServerName].name).get({layer:layer})
                 .$promise.then(
                     function(response){
@@ -101,7 +99,7 @@ angular.module('QLog')
 
             $scope.showColl = function(Layer,Dir,File,callName){
                     $scope.listServer = JSON.parse($window.localStorage["ServerList"]);
-                    return ($scope.listServer["localhost"]["layers"][Layer][Dir][File][callName]=='YES');
+                    return ($scope.listServer["localhost"]["layers"][Layer][Dir][File][callName].show=='YES');
             }
 
 
@@ -109,17 +107,19 @@ angular.module('QLog')
                 $modal.open({
                   templateUrl: 'views/ModalShowTabFields.html',
                   controller: 'ModalShowFieldsController',
-                  scope : $scope
+                  scope: $scope
                 });
               };
 
         }])           
 
-        .controller ('ModalShowFieldsController',['$scope','$modal','$modalInstance','$localStorage', function($scope,$modal,$modalInstance,$localStorage) {
+        .controller ('ModalShowFieldsController',['$scope','$modal','$modalInstance','$localStorage','$window', function($scope,$modal,$modalInstance,$localStorage,$window) {
+
+            $scope.listServer = JSON.parse($window.localStorage["ServerList"]); 
 
             $scope.ok = function (result) {
                 console.log(result);
-                $localStorage.updateFileLayer('ServerList',$scope.listServer)
+                 $localStorage.updateFileLayer('ServerList',$scope.listServer)
                  $modalInstance.close();
             }
 
