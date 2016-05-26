@@ -1,32 +1,44 @@
-<div modal="showAllModal" close="cancel()">
+<div modal="showAllModal">
   <div class="modal-header">
-      <a class="close" data-dismiss="modal">×</a>
-      <h4>Record Details</h4>
+      
+          <h4>Record Details #{{recordNum}}</h4>
+      
   </div>
   <div class="modal-body">
 
-  <div class="row">
 
-        <div class="col-md-6">
-        <ul>
-          <li ng-repeat="(Key,val) in record" ng-hide="$odd">
-           
-            <label>{{Key}} : </label>{{val}}
-          </li>
-        </ul>        
-      </div>       
+    <div class="row">
+          <h3>
+              <div class="col-md-1 col-md-offset-5">
+                  <a><span class="glyphicon glyphicon-chevron-left" aria-hidden="true" ng-click="prevRecord()" ></span></a>
+              </div>
+              <div class="col-md-1">
+                  <a><span class="glyphicon glyphicon-chevron-right" aria-hidden="true" ng-click="nextRecord()" ></span></a>
+              </div>              
+          </h3>
+    </div>
 
-      <div class="col-md-6">
-        <ul>
-          <li ng-repeat="(Key,val) in record" ng-hide="$even">
-            
-            <label>{{Key}} : </label>{{val}}
-          </li>
-        </ul>        
-      </div>  
+    <br/>
+    
+    <div class="row">
+          <div class="col-md-5">
+            <dl class="dl-horizontal">
+                <div ng-repeat="(Key,val) in record[recordNum]">
+                  <dt  ng-hide="$odd">{{Key}}</dt>
+                  <dd ng-hide="$odd">{{val}}</dd>
+                </div>
+            </dl>
+        </div>       
 
-
-  </div>
+        <div class="col-md-5">
+            <dl class="dl-horizontal">
+                <div ng-repeat="(Key,val) in record[recordNum]">
+                  <dt  ng-hide="$even">{{Key}}</dt>
+                  <dd ng-hide="$even">{{val}}</dd>
+                </div>
+            </dl>      
+        </div>  
+    </div>
   </div>
   <div class="modal-footer">
     <button class="btn btn-success" ng-click="ok(listServer)">Okay</button>

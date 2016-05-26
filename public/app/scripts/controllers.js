@@ -60,7 +60,6 @@ angular.module('QLog')
                 // Da qui richiamo in ciclo ricorsivo la getLayerLog
 
                 var layer = $localStorage.getObject("ServerList",{});
-                console.log(layer[ServerName].layers);
                  this.getLayerLog(ServerName,'Engine');
             }      
 
@@ -78,10 +77,12 @@ angular.module('QLog')
             } 
         }])  
 
-        .controller('LogsViewController', ['$scope','$rootScope','$window','$localStorage','$sessionStorage','$modal','$location', function($scope,$rootScope,$window,$localStorage,$sessionStorage,$modal,$location) {
+        .controller('LogsViewController', ['$scope','$rootScope','$window','$localStorage','$sessionStorage','$modal','$location', 'logsViewFactory',
+            function($scope,$rootScope,$window,$localStorage,$sessionStorage,$modal,$location,logsViewFactory) {
             
 
             $scope.server = $location.search().server;
+            $scope.listServer = JSON.parse($window.localStorage["ServerList"]);
 
             $scope.logs = $sessionStorage.get($scope.server);
             console.log("Carico LogsViewController "+$scope.server);
@@ -89,6 +90,19 @@ angular.module('QLog')
             $scope.activeLayer = Object.keys($scope.logs)[0];
             $scope.activeDir = Object.keys($scope.logs[$scope.activeLayer])[0];
             $scope.activeFile = Object.keys($scope.logs[$scope.activeLayer][$scope.activeDir])[0];
+
+            $scope.getLayerLog = function (ServerName,layer) {
+                $scope.logs = logsViewFactory.getLog($scope.server).get({layer:$scope.activeLayer})
+                .$promise.then(
+                    function(response){
+                        $sessionStorage.store($scope.server,$scope.activeLayer,response);
+                        $localStorage.updateLayersStats($scope.server,$scope.activeLayer,response);
+                    },
+                    function(response) {
+                        console.log("Errore!");
+                    }
+                );
+            }             
 
 
             $scope.selectLayer = function (layerName) {
@@ -107,7 +121,7 @@ angular.module('QLog')
             }      
 
             $scope.showColl = function(Layer,Dir,File,callName){
-                    $scope.listServer = JSON.parse($window.localStorage["ServerList"]);
+                   // $scope.listServer = JSON.parse($window.localStorage["ServerList"]);
                     return ($scope.listServer[$scope.server]["layers"][Layer][Dir][File][callName].show=='YES');
             }
 
@@ -126,6 +140,7 @@ angular.module('QLog')
                 $modal.open({
                   templateUrl: 'views/ModalShowAllFields.html',
                   controller: 'ModalShowFieldsController',
+                  windowClass: 'app-modal-window',
                   scope: $scope
                 });
               };              
@@ -154,10 +169,11 @@ angular.module('QLog')
 
             $scope.server = $location.search().server;
             $scope.logs = $sessionStorage.get($scope.server);
+            $scope.firstRecord=true;
 
                     
 
-            $scope.record = $scope.logs[$scope.activeLayer][$scope.activeDir][$scope.activeFile].Records[$scope.recordNum];
+            $scope.record = $scope.logs[$scope.activeLayer][$scope.activeDir][$scope.activeFile].Records;
             console.log($scope.record);  
 
             $scope.ok = function (result) {
@@ -170,6 +186,19 @@ angular.module('QLog')
                 $modalInstance.dismiss('cancel');
             }
 
+            $scope.prevRecord = function () {
+                if($scope.recordNum > 0)
+                    $scope.recordNum --;
+                else
+                    $scope.firstRecord=false;
+
+            }
+
+            $scope.nextRecord = function () {
+                if($scope.recordNum <= $scope.record.length)
+                    $scope.recordNum ++;
+                          
+            }            
 
         }])
 ;

@@ -166,6 +166,7 @@ var readFile = function  (PathFile,stats,level,callback){
 	    		Record[NomeCampi[field]]=fields[field];
 		    }
 			Records.push(Record);
+			var Record = {};
 		}
 	}
 				
