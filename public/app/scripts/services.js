@@ -85,6 +85,7 @@ angular.module('QLog')
 
 
         storeObject: function (key, value, array) {
+            console.log("In storeObject");
             var listServer = $window.localStorage["ServerList"];
 
             if(listServer === undefined)
@@ -92,9 +93,9 @@ angular.module('QLog')
             else
                 listServer = JSON.parse(listServer);
 
-
             if(listServer[value] === undefined){
                 var datetime = new Date();
+
 
                 listServer[value] = {name:'', layers:{}, lastUpdateDate:''};
                 listServer[value].name = value;
@@ -103,25 +104,23 @@ angular.module('QLog')
             }   
         },
         updateFileLayer : function (key,listServer) {
-              console.log(listServer);
               $window.localStorage[key] = JSON.stringify(listServer);
         },
 
         updateServerLayers : function (key,serverName,Layers){
+            
             var datetime = new Date();
             
             listServer = JSON.parse($window.localStorage[key]);
-
             if(listServer[serverName].layers != undefined){
-                    if(listServer[serverName].layers[Layers] != undefined){
+                    if(listServer[serverName].layers[Layers] == undefined){
                     Layers.forEach(function(result,index){
                         var LayerDetails = {numRecords: '', warnings:'', errors:'', lastUpdateDate:''};
                         listServer[serverName].layers[result]=LayerDetails;   
                     });
                 }
             }
-            else
-                console.log("Layer defined!");
+
                     
             listServer[serverName].lastUpdateDate = datetime;
    
@@ -130,6 +129,7 @@ angular.module('QLog')
         updateLayersStats : function(serverName,Layer,Slog) {
          // Accedo al local Storage per fare un update delle informazioni di sintesi sui log raccolti
          // e le scrivo nel JSON per ogni Layer
+         console.log("In updateLayersStats");
             var listServer = JSON.parse($window.localStorage["ServerList"]);
             var File={};
             var Dir={};
@@ -142,7 +142,6 @@ angular.module('QLog')
                 File={};
 
                 if (listServer[serverName].layers[Layer][keyDir] == undefined){
-                    console.log(listServer[serverName].layers[Layer][keyDir]);
                     angular.forEach(valueDir, function(valueFile, keyFile){
                         cont = 0;
                         angular.forEach(valueFile.Header , function(result, index){
@@ -167,8 +166,6 @@ angular.module('QLog')
                         listServer[serverName].layers[Layer][keyDir]=File;
                     });
                 }
-                else
-                    console.log(" gia definito! Skippato");
 
             });
 

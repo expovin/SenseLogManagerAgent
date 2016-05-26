@@ -1,19 +1,30 @@
 'use strict';
 
 angular.module('QLog')
-        .controller('HeaderController', ['$scope','$window','$localStorage', function($scope,$window,$localStorage) {
+        .controller('HeaderController', ['$scope','$rootScope','$window','$localStorage','$state', function($scope,$rootScope,$window,$localStorage,$state) {
+
+            $scope.listServer = $localStorage.getObject('ServerList',{});
+
+            $scope.setActiveServer = function(serverName) {
+                console.log(serverName);
+                $rootScope.server=serverName;
+                $state.go('app.LogsView', {
+                    url: 'LogsView',
+                    views: {
+                        'content@': {
+                            templateUrl : 'views/LogsView.html',
+                            controller  : 'LogsViewController'
+                        }
+                    }
+                });
+
+            }
 
             $scope.addServer = function() {
                 $localStorage.storeObject('ServerList', $scope.server.ServerName,$scope.ServersList);
                 $window.location.reload();
             }
         }])        
-
-        .controller('LogsViewController', ['$scope','$sessionStorage', function($scope,$sessionStorage) {
-
-            $scope.logs = $sessionStorage.get('localhost');
-
-        }])           
 
 
         .controller('ServerController', ['$scope','$window','logsViewFactory','storeServerList','$localStorage', '$sessionStorage', 
@@ -67,53 +78,61 @@ angular.module('QLog')
             } 
         }])  
 
-        .controller('LogsViewController', ['$scope','$window','$localStorage','$sessionStorage','$modal', function($scope,$window,$localStorage,$sessionStorage,$modal) {
+        .controller('LogsViewController', ['$scope','$rootScope','$window','$localStorage','$sessionStorage','$modal','$location', function($scope,$rootScope,$window,$localStorage,$sessionStorage,$modal,$location) {
+            
 
-            $scope.logs = $sessionStorage.get('localhost');
+            $scope.server = $location.search().server;
+
+            $scope.logs = $sessionStorage.get($scope.server);
+            console.log("Carico LogsViewController "+$scope.server);
 
             $scope.activeLayer = Object.keys($scope.logs)[0];
             $scope.activeDir = Object.keys($scope.logs[$scope.activeLayer])[0];
             $scope.activeFile = Object.keys($scope.logs[$scope.activeLayer][$scope.activeDir])[0];
 
-            console.log("activeLayer "+$scope.activeLayer);
-            console.log("activeDir "+$scope.activeDir);
-            console.log("activeFile "+$scope.activeFile);
 
             $scope.selectLayer = function (layerName) {
-                console.log("Selezionato Layer "+layerName);
                 $scope.activeLayer = layerName;
                 $scope.activeDir = Object.keys($scope.logs[$scope.activeLayer])[0];
                 $scope.activeFile = Object.keys($scope.logs[$scope.activeLayer][$scope.activeDir])[0];                
             }
 
             $scope.selectDir = function (dirName) {
-                console.log("Selezionata dir "+dirName);
                 $scope.activeDir = dirName;
                 $scope.activeFile = Object.keys($scope.logs[$scope.activeLayer][$scope.activeDir])[0];
             }      
 
             $scope.selectFile = function (fileName) {
-                console.log("Selezionata file "+fileName);
                 $scope.activeFile = fileName;
             }      
 
             $scope.showColl = function(Layer,Dir,File,callName){
                     $scope.listServer = JSON.parse($window.localStorage["ServerList"]);
-                    return ($scope.listServer["localhost"]["layers"][Layer][Dir][File][callName].show=='YES');
+                    return ($scope.listServer[$scope.server]["layers"][Layer][Dir][File][callName].show=='YES');
             }
 
 
-              $scope.open = function() {
+              $scope.openModalShowTabFields = function() {
                 $modal.open({
                   templateUrl: 'views/ModalShowTabFields.html',
-                  controller: 'ModalShowFieldsController',
+                  controller: 'ModalShowTabFieldsController',
                   scope: $scope
                 });
               };
 
+              $scope.openModalShowAllFields = function(result) {
+                $scope.recordNum = result;
+                console.log("Sono in openModalShowAllFields");
+                $modal.open({
+                  templateUrl: 'views/ModalShowAllFields.html',
+                  controller: 'ModalShowFieldsController',
+                  scope: $scope
+                });
+              };              
+
         }])           
 
-        .controller ('ModalShowFieldsController',['$scope','$modal','$modalInstance','$localStorage','$window', function($scope,$modal,$modalInstance,$localStorage,$window) {
+        .controller ('ModalShowTabFieldsController',['$scope','$modal','$modalInstance','$localStorage','$window', function($scope,$modal,$modalInstance,$localStorage,$window) {
 
             $scope.listServer = JSON.parse($window.localStorage["ServerList"]); 
 
@@ -131,4 +150,26 @@ angular.module('QLog')
 
         }])
 
+        .controller ('ModalShowFieldsController',['$scope','$modal','$modalInstance','$sessionStorage','$window','$location', function($scope,$modal,$modalInstance,$sessionStorage,$window,$location) {
+
+            $scope.server = $location.search().server;
+            $scope.logs = $sessionStorage.get($scope.server);
+
+                    
+
+            $scope.record = $scope.logs[$scope.activeLayer][$scope.activeDir][$scope.activeFile].Records[$scope.recordNum];
+            console.log($scope.record);  
+
+            $scope.ok = function (result) {
+                console.log(result);
+                 $modalInstance.close();
+            }
+
+            $scope.cancel = function () {
+                console.log("Cancel");
+                $modalInstance.dismiss('cancel');
+            }
+
+
+        }])
 ;

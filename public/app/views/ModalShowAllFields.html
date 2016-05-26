@@ -1,0 +1,35 @@
+<div modal="showAllModal" close="cancel()">
+  <div class="modal-header">
+      <a class="close" data-dismiss="modal">×</a>
+      <h4>Record Details</h4>
+  </div>
+  <div class="modal-body">
+
+  <div class="row">
+
+        <div class="col-md-6">
+        <ul>
+          <li ng-repeat="(Key,val) in record" ng-hide="$odd">
+           
+            <label>{{Key}} : </label>{{val}}
+          </li>
+        </ul>        
+      </div>       
+
+      <div class="col-md-6">
+        <ul>
+          <li ng-repeat="(Key,val) in record" ng-hide="$even">
+            
+            <label>{{Key}} : </label>{{val}}
+          </li>
+        </ul>        
+      </div>  
+
+
+  </div>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-success" ng-click="ok(listServer)">Okay</button>
+    <button class="btn" ng-click="cancel()">Cancel</button>
+  </div>
+</div>

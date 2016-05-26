@@ -1,19 +1,19 @@
 
         <div class="row row-content">
             <div class="col-xs-12">        
-                <h1>Dettaglio Log</h1>
+                <h1>Dettaglio Log {{server}}</h1>
 
                 <div class="row">
                     <div class="col-md-1">
                         <ul class="nav nav nav-pills nav-stacked" >
-                          <li role="presentation" ng-class="{active: LayerName == activeLayer}" ng-click="selectLayer(LayerName)" ng-repeat="(LayerName, LayerValue) in logs"><a href="#LogsView">{{LayerName}}</a></li>
+                          <li role="presentation" ng-class="{active: LayerName == activeLayer}" ng-click="selectLayer(LayerName)" ng-repeat="(LayerName, LayerValue) in logs"><a ui-sref="app.LogsView({server:server})">{{LayerName}}</a></li>
                         </ul>  
                     </div>
                     
                         <div class="col-md-11">
                             <ul class="nav nav-tabs">
                               <li role="presentation" ng-class="{active: DirName == activeDir}" ng-click="selectDir(DirName)" 
-                              ng-repeat="(DirName, DirValue) in logs[activeLayer]"><a href="#LogsView">{{DirName}}</a>
+                              ng-repeat="(DirName, DirValue) in logs[activeLayer]"><a ui-sref="app.LogsView({server:server})">{{DirName}}</a>
                               </li>
                             </ul>
 
@@ -24,7 +24,7 @@
                                     <div class="col-md-3">
                                         <ul class="nav nav-pills">
                                           <li role="presentation" ng-class="{active: FileName == activeFile}" ng-click="selectFile(FileName)" 
-                                          ng-repeat="(FileName, FileValue) in logs[activeLayer][activeDir]"><a href="#LogsView">{{FileName}}</a></li>
+                                          ng-repeat="(FileName, FileValue) in logs[activeLayer][activeDir]"><a ui-sref="app.LogsView({server:server})"">{{FileName}}</a></li>
                                         </ul>
                                     </div>
                                     <div class="col-md-3">
@@ -34,7 +34,7 @@
                                         
                                     </div>                                    
                                     <div class="col-md-1">
-                                        <span class="glyphicon glyphicon-th-list" aria-hidden="true" ng-click="open()" ></span>
+                                        <a ui-sref="app.LogsView({server:server})""><span class="glyphicon glyphicon-th-list" aria-hidden="true" ng-click="openModalShowTabFields()" ></span></a>
                                     </div>
 
                                 </div>
@@ -47,7 +47,7 @@
                                     </thead>
                                     <tbody>
                                     </tbody>
-                                      <tr ng-repeat="(RecName, RecVal) in logs[activeLayer][activeDir][activeFile].Records">    
+                                      <tr ng-repeat="(RecName, RecVal) in logs[activeLayer][activeDir][activeFile].Records" ng-click="openModalShowAllFields(RecName)">    
                                           <td ng-repeat="(Key,val) in RecVal" ng-if="showColl(activeLayer,activeDir,activeFile,Key)">{{val}}</td>
                                       </tr>
                                  </table>

@@ -16,17 +16,17 @@
 
                             <div class="panel panel-success">
                               <div class="panel-heading">
-                                <div class="panel-title"><bold>{{Server.name}}</bold> 
+                                <div class="panel-title"><a ui-sref="app.LogsView({server:Server.name})"><bold>{{Server.name}}</bold></a> 
                                   <i>
-                                    <span class="glyphicon glyphicon-remove" aria-hidden="true" ng-click="removeServer(Server.name)"></span>
-                                    <span class="glyphicon glyphicon-download-alt" aria-hidden="true" ng-click="getLayersLog(Server.name)"></span>
+                                    <a href="#"><span class="glyphicon glyphicon-remove" aria-hidden="true" ng-click="removeServer(Server.name)"></span></a>
+                                    <a href="#"><span class="glyphicon glyphicon-download-alt" aria-hidden="true" ng-click="getLayersLog(Server.name)"></span></a>
                                   </i>
                                 </div>
                               </div>
                               <div class="panel-body">
                                 <dl class="dl-horizontal" >
                                   <div ng-repeat="(LayerName, LayerDett) in Server.layers">
-                                    <dt>{{LayerName}} <span class="glyphicon glyphicon-download-alt" aria-hidden="true" ng-click="getLayerLog(Server.name,LayerName)"></span></dt>
+                                    <dt>{{LayerName}} <a href="#"><span class="glyphicon glyphicon-download-alt" aria-hidden="true" ng-click="getLayerLog(Server.name,LayerName)"></span></a></dt>
                                     <dd>{{LayerDett.numRecords}}</dd>
                                   </div>
                                </dl>

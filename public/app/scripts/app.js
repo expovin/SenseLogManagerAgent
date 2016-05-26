@@ -26,7 +26,7 @@ angular.module('QLog', ['ui.router','ngResource','ui.bootstrap'])
 
             // route for the menu page
             .state('app.LogsView', {
-                url: 'LogsView',
+                url: 'LogsView?server',
                 views: {
                     'content@': {
                         templateUrl : 'views/LogsView.html',
