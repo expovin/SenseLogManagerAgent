@@ -1,6 +1,23 @@
 'use strict';
 
 angular.module('QLog')
+
+.filter('custom', function() {
+  return function(input, search) {
+    if (!input) return input;
+    if (!search) return input;
+    var expected = ('' + search).toLowerCase();
+    var result = {};
+    angular.forEach(input, function(value, key) {
+      var actual = ('' + value).toLowerCase();
+      if (actual.indexOf(expected) !== -1) {
+        result[key] = value;
+      }
+    });
+    return result;
+  }
+})
+
         .controller('HeaderController', ['$scope','$rootScope','$window','$localStorage','$state', function($scope,$rootScope,$window,$localStorage,$state) {
 
             $scope.listServer = $localStorage.getObject('ServerList',{});
@@ -22,16 +39,17 @@ angular.module('QLog')
 
             $scope.addServer = function() {
                 $localStorage.storeObject('ServerList', $scope.server.ServerName,$scope.ServersList);
-                $window.location.reload();
+                $state.reload();
             }
         }])        
 
 
-        .controller('ServerController', ['$scope','$window','logsViewFactory','storeServerList','$localStorage', '$sessionStorage', 
-            function($scope,$window,logsViewFactory,storeServerList,$localStorage,$sessionStorage) {
+        .controller('ServerController', ['$scope','logsViewFactory','$localStorage', '$sessionStorage', '$state',
+            function($scope,logsViewFactory,$localStorage,$sessionStorage,$state) {
             
             $scope.layers = {};
             $scope.stat = {};
+            $scope.numRecords = {}
 
             $scope.ServersList = $localStorage.getObject('ServerList');
 
@@ -53,7 +71,7 @@ angular.module('QLog')
 
             $scope.removeServer = function (ServerName) {
                 $localStorage.remove(ServerName);
-                $window.location.reload();
+                $state.reload();
             }
 
             $scope.getLayersLog = function (ServerName) {
@@ -69,6 +87,9 @@ angular.module('QLog')
                     function(response){
                         $sessionStorage.store(ServerName,layer,response);
                         $localStorage.updateLayersStats(ServerName,layer,response);
+                        //var thisLayer={};
+                        //var thisLayer[ServerName] = "{Layer:layer}";
+                        $scope.numRecords = 92;
                     },
                     function(response) {
                         console.log("Errore!");
@@ -77,8 +98,8 @@ angular.module('QLog')
             } 
         }])  
 
-        .controller('LogsViewController', ['$scope','$rootScope','$window','$localStorage','$sessionStorage','$modal','$location', 'logsViewFactory',
-            function($scope,$rootScope,$window,$localStorage,$sessionStorage,$modal,$location,logsViewFactory) {
+        .controller('LogsViewController', ['$scope','$rootScope','$window','$localStorage','$sessionStorage','$modal','$location', 'logsViewFactory','$state',
+            function($scope,$rootScope,$window,$localStorage,$sessionStorage,$modal,$location,logsViewFactory,$state) {
             
 
             $scope.server = $location.search().server;
@@ -97,6 +118,7 @@ angular.module('QLog')
                     function(response){
                         $sessionStorage.store($scope.server,$scope.activeLayer,response);
                         $localStorage.updateLayersStats($scope.server,$scope.activeLayer,response);
+                        $state.reload();
                     },
                     function(response) {
                         console.log("Errore!");
@@ -122,7 +144,22 @@ angular.module('QLog')
 
             $scope.showColl = function(Layer,Dir,File,callName){
                    // $scope.listServer = JSON.parse($window.localStorage["ServerList"]);
+
                     return ($scope.listServer[$scope.server]["layers"][Layer][Dir][File][callName].show=='YES');
+            }
+
+            $scope.highlights = function(record) {
+                if(record.Severity == 'WARN')
+                    return('warning');
+
+                if(record.Severity == 'ERROR')
+                    return('danger');
+
+                if(record.Level == 'WARN')
+                    return('warning');
+
+                if(record.Level == 'ERROR')
+                    return('danger');
             }
 
 
@@ -132,11 +169,12 @@ angular.module('QLog')
                   controller: 'ModalShowTabFieldsController',
                   scope: $scope
                 });
+
               };
 
               $scope.openModalShowAllFields = function(result) {
                 $scope.recordNum = result;
-                console.log("Sono in openModalShowAllFields");
+                console.log("Sono in openModalShowAllFields "+$scope.recordNum);
                 $modal.open({
                   templateUrl: 'views/ModalShowAllFields.html',
                   controller: 'ModalShowFieldsController',
@@ -147,13 +185,15 @@ angular.module('QLog')
 
         }])           
 
-        .controller ('ModalShowTabFieldsController',['$scope','$modal','$modalInstance','$localStorage','$window', function($scope,$modal,$modalInstance,$localStorage,$window) {
+        .controller ('ModalShowTabFieldsController',['$scope','$modal','$modalInstance','$localStorage','$window','$state', 
+            function($scope,$modal,$modalInstance,$localStorage,$window,$state) {
 
             $scope.listServer = JSON.parse($window.localStorage["ServerList"]); 
 
             $scope.ok = function (result) {
                 console.log(result);
-                 $localStorage.updateFileLayer('ServerList',$scope.listServer)
+                 $localStorage.updateFileLayer('ServerList',$scope.listServer);
+                 $state.reload();
                  $modalInstance.close();
             }
 
@@ -173,8 +213,7 @@ angular.module('QLog')
 
                     
 
-            $scope.record = $scope.logs[$scope.activeLayer][$scope.activeDir][$scope.activeFile].Records;
-            console.log($scope.record);  
+            $scope.record = $scope.logs[$scope.activeLayer][$scope.activeDir][$scope.activeFile].Records;  
 
             $scope.ok = function (result) {
                 console.log(result);

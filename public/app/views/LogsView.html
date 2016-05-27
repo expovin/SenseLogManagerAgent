@@ -34,24 +34,47 @@
                                 <br>
 
                                 <div class="row">
+
+                                    <!-- Pills Group containing FileName-->
                                     <div class="col-md-3">
                                         <ul class="nav nav-pills">
                                           <li role="presentation" ng-class="{active: FileName == activeFile}" ng-click="selectFile(FileName)" 
                                           ng-repeat="(FileName, FileValue) in logs[activeLayer][activeDir]"><a ui-sref="app.LogsView({server:server})"">{{FileName}}</a></li>
                                         </ul>
                                     </div>
+
+                                    <!--File Last update date-->
                                     <div class="col-md-3">
                                         <dl>
                                             <dt>Data aggiornamento</dt>
                                             <dd>{{logs[activeLayer][activeDir][activeFile].Stats.mtime | date:'fullDate' }}</dd>
                                         </dl>
                                     </div>
-                                    <div class="col-md-4">
-                                      <div class="inner-addon right-addon">
-                                        <i class="glyphicon glyphicon-search"></i>
-                                        <input type="text" class="form-control" placeholder="Search for..." ng-model="searchText">
-                                      </div>  
+
+ 
+
+
+                                    <!-- SearchBox group including the Dropdown on the field select-->
+                                    <div class="col-md-1">
+
+
+
+                                       <div class="form-group">
+                                        <select ng-init="field = $" class="form-control" ng-model="field">
+                                          <option selected value="$">All</option>
+                                          <option value="{{HeaderName}}" ng-repeat="HeaderName in logs[activeLayer][activeDir][activeFile].Header">{{HeaderName}}</option>
+                                        </select>
+                                      </div>
+
+                                    </div>
+
+                                    <div class="col-md-3">
+                                          <div class="inner-addon right-addon">
+                                            <i class="glyphicon glyphicon-search"></i>
+                                            <input type="text" class="form-control" placeholder="Search for..." ng-model="searchText[field]">
+                                          </div> 
                                     </div>   
+
 
                                     <div class="col-md-2">
                                          <h4><a ui-sref="app.LogsView({server:server})""><span class="glyphicon glyphicon-refresh" aria-hidden="true" ng-click="getLayerLog(server,activeLayer)" ></span></a>  
@@ -60,7 +83,7 @@
 
                                 </div>
 
-                                 <table class="table table-hover">
+                                 <table class="table table-hover table-striped">
                                      <thead>
                                       <tr>
                                         <th ng-repeat="HeaderName in logs[activeLayer][activeDir][activeFile].Header" ng-if="showColl(activeLayer,activeDir,activeFile,HeaderName)">{{HeaderName}}</th>
@@ -68,9 +91,9 @@
                                     </thead>
                                     <tbody>
                                     </tbody>
-                                      <tr ng-repeat="(RecName, RecVal) in logs[activeLayer][activeDir][activeFile].Records" ng-click="openModalShowAllFields(RecName)">    
-                                        <!--  <td ng-repeat="(Key,val) in RecVal" ng-if="showColl(activeLayer,activeDir,activeFile,Key)">{{val}}</td> -->
-                                        <td ng-repeat="(Key,val) in RecVal" ng-if="showColl(activeLayer,activeDir,activeFile,Key)">{{RecVal}}</td>
+                                      <tr ng-repeat="(RecName, RecVal) in logs[activeLayer][activeDir][activeFile].Records | filter:searchText" ng-click="openModalShowAllFields(RecName)" class="{{highlights(RecVal)}}">
+                                         <td ng-repeat="(Key,val) in RecVal" ng-if="showColl(activeLayer,activeDir,activeFile,Key)">{{val}}</td> 
+
                                       </tr>
                                  </table>
 
